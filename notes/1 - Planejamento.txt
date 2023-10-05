@@ -1,0 +1,43 @@
+Apresentacao: 
+
+utilizando progeto base, e montando uma pipeline utilizando
+o github actions e realizando o deploy em um ecs.
+
+Verificando a infra:
+
+verificou toda a infra que foi feita no curso anterior e ainda mostrou mudancas 
+que foram feitas, no caso foi feita a adicao de mais uma instancia ec2, assim 
+tendo 2 e balanceando a carga das requisicoes, ambas se comunicando devido a um
+security group, onde a regra de entrada poderia ter conexao com o banco rds.
+Recomendou para que mantessemos a infra, ate toda a infra com o ecs estiver pronta.
+porem fui cabado e ja tinha excluido, fazer o que, acontece :/
+
+Plano de acao:
+
+mudancas que aconteceram devido a alteracao de ec2 para ecs:
+
+Beneficios:
+
+Tamanho reduzido da aplicacao, pois so teremos o necessario para rodar o app
+Velocidade de criacao desse container e muito menor comparado a uma instancia ec2
+Seguranca, por ter menos aplicacoes em segundo plano dentro da instancia.
+
+Insfraestrutura elastica, nao que nao tenhamos na ec2, mais e muito mais rapido 
+utilizando o ecs, seguro e extrema alta disponibilidade.
+
+Planejamento:
+
+teremos que permitir que o servico de ECS tenha comunicacao com o servido de RDS, alem
+disso tambem utilizaremos um load balancer, para o balanceamento de carga seja algo
+automatizado e auto gerenciado uma vez configurado. Iremos utilizar o ECS junto ao
+FARGATE, que ao invez de ficarmos manejando as instancias, so gerenciamos o container
+e o FARGATE realizar esse gerenciamentos das instancias dentro do cluster.
+
+Nessa aula, você aprendeu como:
+Analisar as partes da infraestrutura existente, com o intuito de reaproveitar o 
+maior número possível de partes, facilitando o nosso trabalho.
+
+Criar um plano geral do que deve ser feito para conseguirmos colocar contêineres no 
+serviço de ECS da AWS, partindo do que existe atualmente e realizando as mudanças na 
+ordem correta.
+
