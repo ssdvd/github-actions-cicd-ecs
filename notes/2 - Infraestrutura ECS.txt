@@ -1,0 +1,21 @@
+Criando um cluster:
+
+criamos um cluster com o nome de api-go, defindo o tipo que no caso usaremos o 
+do tipo FARGATE, no curso fala pra selecionar a VPC e as subredes, porem deve
+ter acontecido algum tipo de atualizacao na aws e nao precisamos mais selecionar a
+vpc, deve usar a padrao da regiao. Feito isso devemos configurar a tarefa dentro 
+do cluster.
+
+Preparando a tafera:
+
+e para preparar uma nova tarefa, iremos na aba de difinicoes de tarefa no ecs,
+iremos criar um nova.
+
+1. Definir o nome da tarefa
+2. selecionar o requisito da infraestrutura(FARGATE,LINUX/X86_64,tamanho tarefa)
+3. Em container: 1, devemos nomear o container, caminho do container, definir se e 
+essencial, porta, protocolo, nome da porta e o protocoloca de aplicacao.
+4. Adicionar as variaveis de ambiente, conforme a necessidade.
+5. deixar o restante de config padrao.
+6. criar definicao.
+
