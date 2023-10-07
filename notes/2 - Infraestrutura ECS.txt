@@ -19,3 +19,42 @@ essencial, porta, protocolo, nome da porta e o protocoloca de aplicacao.
 5. deixar o restante de config padrao.
 6. criar definicao.
 
+atribuindo a tarefa:
+
+Cluster - instancias que vao executar nosso app
+Tarefa - receita do que nosso app precisa(um arquivo que nao executa a receita)
+Servico - liga o arquivo na tarefa com o cluster
+
+e para criar esse servico, podemos primeiro:
+
+1. Acessar o menu do ecs 
+2. acessar o cluster ou a definicao de tarefa
+3. selecionar o botao de implantar servico
+4. selecionar o tipo de aplicacao, no caso e servico
+5. definimos o nome do servico
+6. definimos a quantidade de containers em tarefas desejadas
+7. Em redes, tem que ser o mesmo vpc que o cluster o banco de dados
+8. selecionar o grupo de seguranca 
+9. ativamos o ip publico, para q o container consigo puxar a imagem no dockerhub
+10. criamos um LB para o servico, definimos o nome 
+11. criamos um listerner, nesse caso para a porta 8000 que e a do app
+12. criamos um grupo de destino, que sera utilizado pelo LB, definindo o protocolo
+e o caminho para a verificacao da integridade.
+13. Opcional configurar o AS para escalabilidade, definindo quantidade minima e maxima
+de tarefas, tipo de metrica para aumentar ou diminuir, a que foi escolhida foi a pela
+utilizacao do CPU, se for acima de 85%, ira subir outra, com no maximo 3.
+
+feito isso, podemos clicar em criar para finalizar a tarefa.
+
+Nessa aula, você aprendeu como:
+
+Criar um cluster na AWS, sendo que o cluster é o conjunto de máquinas que vão 
+executar a nossa aplicação, porém ele pode gerar custos.
+
+Criar uma tarefa com as especificações do que a aplicação precisa para ser executada, 
+como variáveis de ambiente e tamanho máximo do container.
+
+Criar um serviço que vai interligar a tarefa com o cluster, e ao mesmo tempo descrever 
+outras partes necessárias para a aplicação como o balanceador de carga.
+
+
