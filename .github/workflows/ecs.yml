@@ -19,3 +19,26 @@ jobs:
 
       - name: OBTER ARQUIVO DA TASK
         run: aws ecs describe-task-definition --task-definition task-api-go --query taskDefinition > task-definition.json
+
+      - name: COLANDO NOVO ID DA IMAGEM NA DEFINICAO DE TAREFA ECS
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+            task-definition: task-definition.json
+            container-name: go
+            image: ssdvd/go_ci:${{github.ref_name}}
+            environment-variables: |
+                HOST= ${{ secrets.DBHOST }}
+                USER= ${{ secrets.DBUSER }}
+                PASSWORD= ${{ secrets.DBPASSWORD }}
+                BDNAME= ${{ secrets.DBNAME }}
+                DBPORT= ${{ secrets.DBPORT }}
+                PORT= 8000
+
+      - name: Fazendo o Deploy da definicao da tarefa no AWS ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+            task-definition: ${{ steps.task-def.outputs.task-definition }}
+            service: service-api-go
+            cluster: api-go
+            wait-for-service-stability: false

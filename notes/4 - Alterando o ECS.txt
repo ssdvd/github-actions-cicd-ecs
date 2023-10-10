@@ -1,0 +1,78 @@
+trocando as images:
+
+e para atualizarmos a nossa imagem utilizando o nosso arquivo de definicao de task,
+podemos utilizar a seguinte rotina:
+
+        # NOME DA TAREFA
+      - name: COLANDO NOVO ID DA IMAGEM NA DEFINICAO DE TAREFA ECS
+        # ID DA TAREFA QUE PODE SER USADA PARA IDENTIFICAR ESSE PASSO
+        id: task-def
+        # REPO UTILIZADO PARA A ROTINA FUNCIONAR
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+            # CHAVES E VALORES DO REPO 
+            task-definition: task-definition.json
+            container-name: go
+            image: ssdvd/go_ci:${{github.ref_name}}
+
+definindo o nome, o id, o repo utilizado e os valores das chaves, em task-definition
+mostrando o task-definition.json do qual acabamos de obter com a rotina obter arquivo 
+da task, nomeando o novo container trocando a imagem da tarefa task-definition.json 
+para a imagem ssdvd/go_ci:${{github.ref_name}}
+
+Variveis de ambiente:
+
+e para levarmos as variaveis de ambiente para essa nova imagem, devemos colocar mais
+uma chave com os valores:
+
+      - name: COLANDO NOVO ID DA IMAGEM NA DEFINICAO DE TAREFA ECS
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+            task-definition: task-definition.json
+            container-name: go
+            image: ssdvd/go_ci:${{github.ref_name}}
+            environment-variables: |
+                HOST= ${{ secrets.DBHOST }}
+                USER= ${{ secrets.DBUSER }}
+                PASSWORD= ${{ secrets.DBPASSWORD }}
+                BDNAME= ${{ secrets.DBNAME }}
+                DBPORT= ${{ secrets.DBPORT }}
+                PORT= 8000
+
+a chave adicionada foi o environment-variables, e nela exportarmos as mesmas variaveis
+das quais utilizamos para subir a instancia ec2
+
+Enviando tarefa:
+
+E para enviarmos a nossa rotina, primeiro devemos utilizar uma task da aws, de onde 
+estamos pegando as atuais tasks, com o bloco de cod:
+
+      - name: Fazendo o Deploy da definicao da tarefa no AWS ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+            task-definition: ${{ steps.task-def.outputs.task-definition }}
+            service: my-service
+            cluster: api-go
+            wait-for-service-stability: true
+
+
+Aqui definimos o nome da task de fazendo o deploy da definicao da tarefa no aws ecs,
+usando o repo oficial da aws, e em task-definition estamos utilizando a saida
+da task anterior, no valor ${{ steps.task-def.outputs.task-definition }}, podemos 
+ver que depois de steps, temos o task-def, que e o ID da task que subimos a nova imagem
+para a definicao de tarefa, e estamos pegando a saida daquela task q e justamente a 
+task-definition atualizada e subindo no servico, assim atualizando de maneira automatica
+em service, definimos o service anteriormente criado, em cluster informamos nosso cluster
+e em wait-for-service-stability: true, estamos dizendo que iremos esperar que o service
+esteja estavel para a publicacao do mesmo. Isso e visto como uma boa pratica.
+
+Nessa aula, você aprendeu como:
+Atualizar o arquivo da tarefa e assim trocar a imagem que estamos utilizando, ou apenas 
+a sua versão.
+
+Atualizar as variáveis de ambiente do arquivo da tarefa e assim permitir atualizações 
+de informações relacionadas com o banco de dados ou com a porta da aplicação.
+
+Enviar o arquivo de tarefa atualizado para a AWS e assim já atualizar ela dentro do 
+cluster, modificando e atualizando a aplicação em produção ou desenvolvimento.
