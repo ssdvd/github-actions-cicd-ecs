@@ -1,0 +1,81 @@
+Mais arquvios:
+
+aqui iremos criar nosso arquivo que realizara a rotina no ecs, onde iremos utilizar 
+o arquivo ecs.yml, com o seguinte conteudo:
+
+# NOME ROTINA
+name: Entrega continua
+
+#QUANDO SERA EXECUTADO: NA CHAMADA DO ARQUIVO
+on:
+  workflow_call:
+
+#TAREFAS
+jobs:
+
+    ecs:
+        runs-on: ubuntu-latest
+        steps:
+
+com as linhas comentadas no codigo, ja temos uma ideia do que se trata o mesmo.
+feito isso, precisamos comentar no arquivo go.yml, referente a task que chama a rotina
+do ec2, e assim que e comentada a mesma nao sera mais chamada, devido a nova configuracao
+que sera feita no arquivo ecs.yml. E inserimos a task que ira chamar a task do ecs:
+
+  deploy_ecs: # NOME DA TAREFA 
+    needs: docker # E EXETCUTADA SO DEPOIS DA TASK docker FOR CONCLUIDA
+    uses: ./.github/workflows/ecs.yml #ARQUIVO QUE SERA UTILIZADO
+    secrets: inherit # VAI HERDAR OS SECRETS DO REPO
+
+explicado conforme texto comentado.
+
+Arquivo da tarefa:
+
+para comecar a iniciar a tarefa, devemos primeiro obter um arquivo com a definicao da
+nossa tarefa que foi criada anteriormente, e para isso devemos primeiros utilizar 
+uma task dentro do marketplace do github uma rotina em que possamos obter os dados
+da nossa definicao de tarefa sempre atualizado, para que nao possamos fazer isso 
+de forma manual. 
+
+Utilizando o marketplace a rotina sempre estara atualizada, assim evitando possiveis 
+erros futuros, e quando acharmos a rotina de deploy task definition da aws dentro do 
+marketplace, devemos criar uma tarefa da seguinte maneira:
+
+- name: OBTER ARQUIVO DA TASK
+          run: aws ecs describe-task-definition --task-definition task-api-go --query taskDefinition > task-definition.json
+
+nessa task, estamos obtendo o arquivo da nossa tarefa, podemos ver em --task-definition 
+task-api-go, que estamos querendo obter os dados da nossa tarefa que foi crianda antes
+e em --query estamos dizendo para gravar a saida do comando em um arquivo chamado
+task-definition.json. Mas antes de usarmos esse arquivos, devemos fazer o login na
+aws utilizando a pipeline.
+
+Entrando na AWS:
+
+
+e para realizar a autenticacao na aws utilizando a pipeline, podemos utilizar da documentacao
+do proprio material da AWS no github actions, da mesma rotina em que puxamos a task definition
+com o seguinte bloco de cdd:
+
+        #NOMEANDO TASK
+        - name: Autenticando credenciais AWS
+        #UTILIZANDO O REPO DA AWS DENTRO DO MARKETPLACE DO GITHUB ACTIONS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+            #DADOS DE AUTENTICACAO AWS
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            #REGIAO AWS
+            aws-region: us-east-2
+
+Comentarios no bloco, autoexplicativos. e para os secrets das credenciais, iremos
+criar um usuario de acesso programatico e inserir os dados nessas secrets.
+
+Chaves de acesso:
+
+Criamos ou utilizamos uma chave de acesso com a permissao necessaria para poder
+realizar as rotinas na nossa pipeline, com os a chave de acesso e a chave secreta,
+podemos criar os secrets que serao utilizados nessa rotina, que no caso sao 
+AWS_ACCESS_KEY_ID e AWS_SECRET_ACCESS_KEY, feito isso, estamos prontos para realizar
+a autenticacao.
+

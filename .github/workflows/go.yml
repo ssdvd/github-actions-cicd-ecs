@@ -63,7 +63,13 @@ jobs:
     uses: ./.github/workflows/docker.yml
     secrets: inherit
 
-  deploy_ec2:
-    needs: build
-    uses: ./.github/workflows/ec2.yml
-    secrets: inherit
+#  deploy_ec2:
+#    needs: build
+#    uses: ./.github/workflows/ec2.yml
+#    secrets: inherit
+
+  
+  deploy_ecs: # NOME DA TAREFA 
+    needs: docker # E EXETCUTADA SO DEPOIS DA TASK docker FOR CONCLUIDA
+    uses: ./.github/workflows/ecs.yml #ARQUIVO QUE SERA UTILIZADO
+    secrets: inherit # VAI HERDAR OS SECRETS DO REPO
