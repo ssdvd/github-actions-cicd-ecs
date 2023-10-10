@@ -79,3 +79,16 @@ podemos criar os secrets que serao utilizados nessa rotina, que no caso sao
 AWS_ACCESS_KEY_ID e AWS_SECRET_ACCESS_KEY, feito isso, estamos prontos para realizar
 a autenticacao.
 
+Nessa aula, você aprendeu:
+
+Evitar que rotinas sejam executadas, e comentar as linhas de código que chamavam a 
+rotina do EC2 no arquivo principal.
+
+Obter o arquivo da tarefa automaticamente e utilizar o código fornecido pela AWS em 
+um exemplo de utilização.
+
+Realizar o login na AWS através de uma rotina, tendo assim acesso a todas as funções 
+que a AWS fornece, como acesso aos recursos do ECS.
+
+Criar uma chave de acesso para AWS, o que nos permite realizar a autenticação através 
+do terminal e utilizando duas chaves, e não nosso usuário e senha.
