@@ -1,0 +1,82 @@
+problemas com a imagem:
+
+ao tentar subir o servico, o mesmo nao foi possivel devido a um dos comandos
+demandar de permissoes maiores para executar no nosso container o arquivo main, por 
+isso nosso servico do nosso cluster esta apresentando falhas. e para corrigir isso 
+podemos fazer o seguinte, iremos inserir o seguinte comando dentro do nosso 
+dockerfile:
+
+RUN chmod +x main
+
+e tambem precisamos dos arquivos estatitcos, os .html do nosso app e para isso
+podemos fazer o seguinte:
+
+COPY ./templates/ templates/
+
+copiando a pasta templates, que e onde estao os arquivos estaticos para o nosso container
+assim quando ele for executado e acessarmos a API pelo navegador, o mesmo responder 
+com essas paginas estaticas.
+
+com essas correcoes o processo da pipeline nao sera travado.
+
+lembrando que todas vezes que o servico apresentar alguma falha, e possivel visualizar
+o log do service, para verificar o que esta acontecendo e o porque da falha.
+
+Novo sistema de versao:
+
+por enquanto para diferenciar as nossas versoes, estamos colocando as tags das nossas
+imagem com o nome da branch, por mais que seja facil identificar, o ideal seria alem
+de termos o nome da branch tambem ter um tipo de versionador por numero e sendo 
+sequencial seria melhor ainda, e para isso podemos consultar o doc do github actions
+para verificar como podemos fazer isso, podemos fazer dessa forma:
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v5.0.0
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ssdvd/go_ci:${{github.run_number}}
+
+aqui modificamos a chave tags, o que antes era feito com o github.ref_name, agora 
+e feito com github.run_number, e essa chave de contexto, toda vez que a rotina 
+e executada ganha um numero comecando do 1, e mesmo se a rotina falhar a proxima
+vez que a rotina for executada o numero sera o mesmo, somente sera alterado quando 
+a rotinha for executada sem falha, assim a tag do nosso container ficaria da seguinte
+forma:
+
+ssdvd/go_ci:1
+
+e iria aumentando conforme o numero de vezes em que executarmos a rotina sem falhas
+e alem disse tambem iremos mudar na definicao de tarefa do nosso servico dentro do
+cluster. Alteramos a chave image do job colando novo id da imagem na definicao de 
+tarefa ecs:
+
+- name: COLANDO NOVO ID DA IMAGEM NA DEFINICAO DE TAREFA ECS
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+            task-definition: task-definition.json
+            container-name: go
+            image: ssdvd/go_ci:${{github.run_number}}
+            environment-variables: |
+                HOST= ${{ secrets.DBHOST }}
+                USER= ${{ secrets.DBUSER }}
+                PASSWORD= ${{ secrets.DBPASSWORD }}
+                BDNAME= ${{ secrets.DBNAME }}
+                DBPORT= ${{ secrets.DBPORT }}
+                PORT= 8000
+
+assim, a imagem em que essa definicao de tarefa esta pegando, sera a mesma que foi
+atualizada por ultima pela a pipeline.
+
+Nessa aula, você aprendeu como:
+Encontrar problemas de execução em um container sendo executado no ECS e utilizar os
+ logs de execução para achar os erros da aplicação.
+
+Corrigir a imagem docker criada e assim conseguir compararo erro obtido do container
+com a aplicação que executa normalmente em máquinas virtuais.
+
+Criar um sistema de versionamento baseado na execução do GitHub Actions, utilizando
+ o github.run_number para contabilizar a execução da rotina.
+
